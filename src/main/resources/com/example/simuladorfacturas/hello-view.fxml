@@ -20,7 +20,7 @@
                      <Insets />
                   </VBox.margin>
                </Label>
-               <DatePicker />
+               <DatePicker fx:id="fechaInicial" onAction="#setFechaInicial" />
             </children>
             <padding>
                <Insets left="10.0" right="10.0" />
@@ -33,7 +33,7 @@
                      <Insets left="25.0" />
                   </padding>
                </Label>
-               <DatePicker />
+               <DatePicker fx:id="fechaFinal" onAction="#setFechaFinal" />
             </children>
             <padding>
                <Insets left="10.0" right="10.0" />
@@ -67,7 +67,7 @@
                   <padding>
                      <Insets left="15.0" />
                   </padding></Label>
-               <TextField />
+               <TextField fx:id="p1" />
             </children>
             <HBox.margin>
                <Insets left="10.0" right="10.0" />
@@ -79,7 +79,7 @@
                   <padding>
                      <Insets left="15.0" />
                   </padding></Label>
-               <TextField />
+               <TextField fx:id="p2" />
             </children>
             <HBox.margin>
                <Insets left="15.0" right="10.0" />
@@ -98,7 +98,7 @@
    </HBox>
    <HBox alignment="TOP_CENTER" prefHeight="68.0" prefWidth="373.0">
       <children>
-         <Button mnemonicParsing="false" text="Identificarse">
+         <Button fx:id="loguear" mnemonicParsing="false" onAction="#loguear" text="Identificarse">
             <HBox.margin>
                <Insets left="20.0" right="20.0" />
             </HBox.margin>
