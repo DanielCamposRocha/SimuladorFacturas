@@ -8,8 +8,7 @@
     <padding>
         <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
     </padding>
-   <Button mnemonicParsing="false" text="Identificarse" />
-   <HBox alignment="TOP_CENTER" prefHeight="100.0" prefWidth="200.0">
+   <HBox alignment="TOP_CENTER" prefHeight="62.0" prefWidth="393.0">
       <children>
          <VBox prefHeight="84.0" prefWidth="160.0">
             <children>
@@ -48,9 +47,19 @@
          <Insets left="10.0" right="10.0" />
       </padding>
    </HBox>
+   <HBox alignment="TOP_CENTER" prefHeight="100.0" prefWidth="200.0">
+      <children>
+         <Label prefHeight="86.0" prefWidth="291.0" text="Descargue un documento csv con las lecturas de su contador, desde la pagina de su distribuidor,  cuando lo tenga seleccionelo pulsando el boton consumos" wrapText="true" />
+         <Button mnemonicParsing="false" text="Consumos">
+            <HBox.margin>
+               <Insets left="20.0" right="20.0" top="30.0" />
+            </HBox.margin>
+         </Button>
+      </children>
+   </HBox>
 
     <Label fx:id="welcomeText" text="Potencias" />
-   <HBox alignment="TOP_CENTER" prefHeight="100.0" prefWidth="413.0">
+   <HBox alignment="TOP_CENTER" prefHeight="70.0" prefWidth="393.0">
       <children>
          <VBox prefHeight="100.0" prefWidth="160.0">
             <children>
@@ -58,11 +67,7 @@
                   <padding>
                      <Insets left="15.0" />
                   </padding></Label>
-               <TextArea prefHeight="38.0" prefWidth="160.0">
-                  <VBox.margin>
-                     <Insets />
-                  </VBox.margin>
-               </TextArea>
+               <TextField />
             </children>
             <HBox.margin>
                <Insets left="10.0" right="10.0" />
@@ -74,10 +79,7 @@
                   <padding>
                      <Insets left="15.0" />
                   </padding></Label>
-               <TextArea prefHeight="38.0" prefWidth="130.0">
-                  <VBox.margin>
-                     <Insets />
-                  </VBox.margin></TextArea>
+               <TextField />
             </children>
             <HBox.margin>
                <Insets left="15.0" right="10.0" />
@@ -94,6 +96,24 @@
          <Insets left="10.0" />
       </padding>
    </HBox>
-   <Button mnemonicParsing="false" text="Consumos" />
-    <Button onAction="#onHelloButtonClick" text="Continuar" />
+   <HBox alignment="TOP_CENTER" prefHeight="68.0" prefWidth="373.0">
+      <children>
+         <Button mnemonicParsing="false" text="Identificarse">
+            <HBox.margin>
+               <Insets left="20.0" right="20.0" />
+            </HBox.margin>
+         </Button>
+          <Button onAction="#onHelloButtonClick" text="Continuar">
+            <HBox.margin>
+               <Insets left="20.0" right="20.0" />
+            </HBox.margin>
+         </Button>
+      </children>
+      <VBox.margin>
+         <Insets left="20.0" right="20.0" />
+      </VBox.margin>
+      <padding>
+         <Insets right="20.0" top="20.0" />
+      </padding>
+   </HBox>
 </VBox>
