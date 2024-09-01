@@ -1,4 +1,4 @@
-package com.example.simuladorfacturas;
+package com.example.simuladorfacturas.estadisticas;
 
 
 
@@ -103,12 +103,14 @@ public class Medias {
             precio+=coste.getPrecio();
             gasto+=coste.getCoste();
         }
-        consumoPromedio=consumos1/(lunes.size()/24);
-        precioPromedio=precio/(lunes.size());
-        gastopromedio=(gasto*24)/(lunes.size());
-        System.out.println("Datos del "+dia);
-        System.out.println("El consumo promedio es "+formato.format(consumoPromedio)+" KWH al dia o "+formato.format(consumoPromedio/24)+" KWH a la hora");
-        System.out.println("El precio promedio es "+formato.format(precioPromedio/1000)+" €/KWH a la hora");
-        System.out.println("El gasto promedio es "+formato.format(gastopromedio)+" € al dia");
+        if(lunes.size()>0){
+            consumoPromedio=consumos1/(lunes.size()/24);
+            precioPromedio=precio/(lunes.size());
+            gastopromedio=(gasto*24)/(lunes.size());
+            System.out.println("Datos del "+dia);
+            System.out.println("El consumo promedio es "+formato.format(consumoPromedio)+" KWH al dia o "+formato.format(consumoPromedio/24)+" KWH a la hora");
+            System.out.println("El precio promedio es "+formato.format(precioPromedio/1000)+" €/KWH a la hora");
+            System.out.println("El gasto promedio es "+formato.format(gastopromedio)+" € al dia");
+        }
     }
 }

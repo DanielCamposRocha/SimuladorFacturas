@@ -69,6 +69,7 @@ public class Parseos {
 
     public static void leerCsvConsumos(String archivo){
         try (BufferedReader br= new BufferedReader(new FileReader(archivo))){
+            PVPC.setListadoLecturas(new HashMap<>());
             boolean real= true;
             String linea;
             int contadorlineas=0;

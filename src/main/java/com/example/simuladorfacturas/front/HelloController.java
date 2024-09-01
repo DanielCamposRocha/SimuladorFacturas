@@ -1,13 +1,14 @@
-package com.example.simuladorfacturas;
+package com.example.simuladorfacturas.front;
 
+import com.example.simuladorfacturas.Scripts;
 import com.example.simuladorfacturas.contratos.PVPC;
-import com.example.simuladorfacturas.parseos.Parseos;
+import com.example.simuladorfacturas.controlador.Controlador;
+import com.example.simuladorfacturas.validadores.Validaciones;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.DatePicker;
-import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -16,7 +17,6 @@ import java.io.File;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
 
 public class HelloController {
     @FXML
@@ -36,11 +36,16 @@ public class HelloController {
 
     @FXML
     protected void onHelloButtonClick() {
-        if(selectedFile!=null) Parseos.leerCsvConsumos(selectedFile.getAbsolutePath());
-        LocalDateTime fechaI=LocalDateTime.of(fechaInicialSeleccionada,LocalTime.of(0,0,0));
-        LocalDateTime fechaf=LocalDateTime.of(fechafinalSeleccionada, LocalTime.of(0,0,0));
-        Main.lanzarScript(fechaI);
-        PVPC.calcularFactura(fechaI,fechaf,Double.parseDouble(p1.getText()),Double.parseDouble(p2.getText()));
+        //if(selectedFile!=null) Parseos.leerCsvConsumos(selectedFile.getAbsolutePath());
+        if (Validaciones.validarFechas(fechaInicialSeleccionada,fechafinalSeleccionada)){
+            Controlador.openConexion();
+            LocalDateTime fechaI=LocalDateTime.of(fechaInicialSeleccionada,LocalTime.of(0,0,0));
+            LocalDateTime fechaf=LocalDateTime.of(fechafinalSeleccionada, LocalTime.of(23,0,0));
+            double P1= Validaciones.validarDouble(p1.getText());
+            double P2=Validaciones.validarDouble(p2.getText());
+            if(P1!=-1 & P2!=-1) PVPC.calcularFactura(fechaI,fechaf,P1,P2);
+            Controlador.closeConexion();
+        }
     }
 
 
@@ -67,11 +72,9 @@ public class HelloController {
 
     public void setFechaFinal(ActionEvent actionEvent) {
         fechafinalSeleccionada= fechaFinal.getValue();
-        System.out.println(fechafinalSeleccionada);
     }
 
     public void setFechaInicial(ActionEvent actionEvent) {
         fechaInicialSeleccionada= fechaInicial.getValue();
-        System.out.println(fechaInicialSeleccionada);
     }
 }

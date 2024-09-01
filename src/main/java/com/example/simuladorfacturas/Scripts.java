@@ -1,7 +1,7 @@
 package com.example.simuladorfacturas;
 
-import com.example.simuladorfacturas.basedatos.BaseDatos;
 import com.example.simuladorfacturas.contratos.PVPC;
+import com.example.simuladorfacturas.controlador.Controlador;
 import com.example.simuladorfacturas.parseos.Parseos;
 
 import java.io.BufferedReader;
@@ -10,16 +10,16 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Main {
+public class Scripts {
 
 
     public static void main(String[] args) {
 //        Parseos.leerExcellPrecios("export_TerminoDeFacturacionDeEnergiaActivaDelPVPC20TD_2024-08-11_16_20.csv");
 //        Parseos.leerCsvConsumos("consumptions (6).csv");
 //        System.out.println(PVPC.getListadoLecturas());
-//        BaseDatos.crearTablaLecturas( PVPC.getListadoLecturas());
-//        lanzarScript(BaseDatos.fechaUltima());
-//        BaseDatos.insertPrecios(PVPC.getListadoPrecios());
+//        Controlador.crearTablaLecturas( PVPC.getListadoLecturas());
+//        lanzarScript(Controlador.ultimaActualizacionREE());
+//        Controlador.insertPrecios(PVPC.getListadoPrecios());
 //        PVPC.calcularFactura();
 
         }
@@ -39,7 +39,7 @@ public class Main {
                 // Crear el comando para ejecutar el script de Python
                 List<String> command = new ArrayList<>();
                 command.add("python"); // o "python3" igual hay que cambiarlo en otro equipo
-                command.add("consultaree.py");
+                command.add("src/main/resources/consultaree.py");
                 command.add(inic);
                 command.add(fin);
                 command.add(token);
@@ -75,7 +75,7 @@ public class Main {
     }
 
 
-    
+
 
 }
 

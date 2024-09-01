@@ -1,12 +1,11 @@
 package com.example.simuladorfacturas.contratos;
 
-import com.example.simuladorfacturas.Medias;
-import com.example.simuladorfacturas.basedatos.BaseDatos;
+import com.example.simuladorfacturas.controlador.Controlador;
+import com.example.simuladorfacturas.estadisticas.Medias;
 import com.example.simuladorfacturas.objetos.Coste;
 import com.example.simuladorfacturas.objetos.Lectura;
 import com.example.simuladorfacturas.objetos.Potencia;
 import com.example.simuladorfacturas.objetos.Precio;
-import com.example.simuladorfacturas.utilidades.Utilidades;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -21,13 +20,13 @@ public class PVPC {
     private static ArrayList<Precio> listadoPrecios = new ArrayList<>();
     private static HashMap<LocalDateTime , Lectura> listadoLecturas= new HashMap<>();
     private static String identificador="es0022000004433403rw1p";
-    private static BigDecimal total=new BigDecimal(0.00);
+    private static BigDecimal total;
     private static BigDecimal clavada=new BigDecimal(0);
 
 
 
 
-    public static void calcularFactura(LocalDateTime localDateTimeI,LocalDateTime localDateTimeF, double pot1,double pot2) {
+    public static void calcularFactura(LocalDateTime localDateTimeI, LocalDateTime localDateTimeF, double pot1, double pot2) {
 
         double consumos = 0;
         double autoconsumos=0;
@@ -38,12 +37,13 @@ public class PVPC {
         BigDecimal margen=new BigDecimal(0);
         BigDecimal costep1=new BigDecimal(0);
         BigDecimal costep2=new BigDecimal(0);
-
         BigDecimal pp=new BigDecimal(0);
         BigDecimal impuestoEl=new BigDecimal(0);
         BigDecimal iva=new BigDecimal(0);
         BigDecimal bono=new BigDecimal(0);
         BigDecimal alquiler=new BigDecimal(0);
+
+        total=new BigDecimal(0.00);
         double peaje=2.989915;
         double peaje2=0.192288;
         double bonosocial=2.299047*5.394483/366;
@@ -56,8 +56,8 @@ public class PVPC {
 //        String[] ffinal=fecha_final.split("-");
 //        LocalDateTime localDateTimeI=LocalDateTime.of(Integer.parseInt(inicial[0]),Integer.parseInt(inicial[1]),Integer.parseInt(inicial[2]),0,0);
 //        LocalDateTime localDateTimeF=LocalDateTime.of(Integer.parseInt(ffinal[0]),Integer.parseInt(ffinal[1]),Integer.parseInt(ffinal[2]),0,0);
-        LocalDateTime busqueda=localDateTimeF.minusHours(1);
-        listacostes= BaseDatos.calcularCostes(identificador, localDateTimeI,busqueda);
+
+        listacostes= Controlador.calcularCostes(identificador, localDateTimeI,localDateTimeF);
 
         for (Coste coste:listacostes ) {
             total=total.add(new BigDecimal(coste.getCoste()));
@@ -66,33 +66,40 @@ public class PVPC {
         }
             //Caso de ser en el mismo año
         if(localDateTimeI.getYear()==localDateTimeF.getYear()){
-            preciosPotencia=BaseDatos.anoPotencia(localDateTimeI.getYear());
+            preciosPotencia= Controlador.anoPotencia(localDateTimeI.getYear());
             double precioPo1=preciosPotencia.getP1()+peaje;//coste de la potencia en P1
             double precioPo2=preciosPotencia.getP2()+peaje2;//coste de la potencia en P2
             Duration duracion=Duration.between(localDateTimeI,localDateTimeF);
             dias=(int)duracion.toDays();
             double proporcionDias=dias/366.0;
             bono=new BigDecimal(dias*bonosocial).setScale(2, RoundingMode.HALF_DOWN);//coste bono social
-            costep1=new BigDecimal(pot1).multiply(new BigDecimal(precioPo1)).multiply(new BigDecimal(proporcionDias)).setScale(2, RoundingMode.HALF_DOWN);//total coste P1
-            costep2=new BigDecimal(pot2).multiply(new BigDecimal(precioPo2)).multiply(new BigDecimal(proporcionDias)).setScale(2, RoundingMode.HALF_DOWN);//total coste P2
+            costep1=new BigDecimal(pot1).multiply(new BigDecimal(precioPo1)).multiply(new BigDecimal(proporcionDias)).
+                    setScale(2, RoundingMode.HALF_DOWN);//total coste P1
+            costep2=new BigDecimal(pot2).multiply(new BigDecimal(precioPo2)).multiply(new BigDecimal(proporcionDias)).
+                    setScale(2, RoundingMode.HALF_DOWN);//total coste P2
             margen=new BigDecimal(pot1*3.113*dias/366).setScale(2, RoundingMode.HALF_DOWN);//margen potencia distribuidora
             pp=costep1.add(costep2).add(margen).setScale(2, RoundingMode.HALF_DOWN);//coste total de la potencia contratada
             alquiler=new BigDecimal(dias*0.026557).setScale(2, RoundingMode.HALF_DOWN);//alquiler contador
-            impuestoEl=total.add(bono).add(pp).multiply(new BigDecimal("0.0511269632")).setScale(2, RoundingMode.HALF_DOWN);//impuesto electrico
-            iva=total.add(pp).add(bono).add(impuestoEl).add(alquiler).multiply(new BigDecimal(0.1)).setScale(2, RoundingMode.HALF_DOWN);//iva, ojo con los cambios de valor
-            clavada=total.add(pp).add(bono).add(impuestoEl).add(alquiler).add(iva).setScale(2, RoundingMode.HALF_DOWN);//total de la factura
+            impuestoEl=total.add(bono).add(pp).multiply(new BigDecimal("0.0511269632")).
+                    setScale(2, RoundingMode.HALF_DOWN);//impuesto electrico
+            iva=total.add(pp).add(bono).add(impuestoEl).add(alquiler).multiply(new BigDecimal(0.1)).
+                    setScale(2, RoundingMode.HALF_DOWN);//iva, ojo con los cambios de valor
+            clavada=total.add(pp).add(bono).add(impuestoEl).add(alquiler).add(iva).
+                    setScale(2, RoundingMode.HALF_DOWN);//total de la factura
 
         }else{
             //distintos años
             ArrayList<Potencia> listadoPotencias=new ArrayList<>();
             int anhos=localDateTimeF.getYear()-localDateTimeI.getYear();
             double anhosPerdidos=0;
-            for(int i=localDateTimeI.getYear()+1;i<localDateTimeI.getYear();i++) listadoPotencias.add(BaseDatos.anoPotencia(i));//listado precios años intermedios
-            for (Potencia pot:listadoPotencias)  anhosPerdidos+=pot.getP1()+peaje+pot.getP2()+peaje;//costes de potencia en los años intermedios
+            //listado precios años intermedios
+            for(int i=localDateTimeI.getYear()+1;i<localDateTimeI.getYear();i++) listadoPotencias.add(Controlador.anoPotencia(i));
+            //costes de potencia en los años intermedios
+            for (Potencia pot:listadoPotencias)  anhosPerdidos+=pot.getP1()+peaje+pot.getP2()+peaje;
             BigDecimal costep1F=new BigDecimal(0);
             BigDecimal costep2F=new BigDecimal(0);
-            preciosPotencia=BaseDatos.anoPotencia(localDateTimeI.getYear());
-            preciosPotencia2=BaseDatos.anoPotencia(localDateTimeF.getYear());
+            preciosPotencia=Controlador.anoPotencia(localDateTimeI.getYear());
+            preciosPotencia2=Controlador.anoPotencia(localDateTimeF.getYear());
             Duration duracion=Duration.between(localDateTimeI,LocalDateTime.of(localDateTimeI.getYear(),12,31,23,59));
             Duration duracion2=Duration.between(LocalDateTime.of(localDateTimeF.getYear(),1,1,0,0),localDateTimeF);
             int diasI=(int)duracion.toDays();//desde la fecha inicial a fin de año
@@ -136,22 +143,6 @@ public class PVPC {
         return listacostes;
     }
 
-    public static void setListacostes(ArrayList<Coste> listacostes) {
-        PVPC.listacostes = listacostes;
-    }
-
-    public ArrayList<Potencia> getListadoPotencias() {
-        return listadoPotencias;
-    }
-
-    public void setListadoPotencias(ArrayList<Potencia> listadoPotencias) {
-        this.listadoPotencias = listadoPotencias;
-    }
-
-    public static ArrayList<Precio> getListadoPrecios() {
-        return listadoPrecios;
-    }
-
     public static void setListadoPrecios(ArrayList<Precio> listadoPrecios) {
         PVPC.listadoPrecios = listadoPrecios;
     }
@@ -172,19 +163,11 @@ public class PVPC {
         PVPC.identificador = identificador;
     }
 
-    public static BigDecimal getTotal() {
-        return total;
-    }
-
-    public static void setTotal(BigDecimal total) {
-        PVPC.total = total;
-    }
-
     public static BigDecimal getClavada() {
         return clavada;
     }
-
-    public static void setClavada(BigDecimal clavada) {
-        PVPC.clavada = clavada;
+    public static ArrayList<Precio> getListadoPrecios() {
+        return listadoPrecios;
     }
+
 }
