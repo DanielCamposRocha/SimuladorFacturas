@@ -1,5 +1,6 @@
 package com.example.simuladorfacturas.front;
 
+import com.example.simuladorfacturas.AplicacionUsuarios;
 import com.example.simuladorfacturas.Scripts;
 import com.example.simuladorfacturas.contratos.PVPC;
 import com.example.simuladorfacturas.controlador.Controlador;
@@ -67,7 +68,8 @@ public class HelloController {
     }
 
     public void loguear(ActionEvent actionEvent) {
-
+        AplicacionUsuarios app=new AplicacionUsuarios();
+        app.ejecutar();
     }
 
     public void setFechaFinal(ActionEvent actionEvent) {

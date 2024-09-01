@@ -3,6 +3,7 @@ module com.example.simuladorfacturas {
     requires javafx.fxml;
     requires java.sql;
     requires java.desktop;
+    requires jbcrypt;
 
 
     opens com.example.simuladorfacturas to javafx.fxml;
