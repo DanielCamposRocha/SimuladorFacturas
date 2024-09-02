@@ -6,6 +6,7 @@ import java.sql.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class BaseDatos {
     private static final String DB_URL = "jdbc:mysql://localhost:3306/FacturaLuz";
@@ -204,7 +205,7 @@ public class BaseDatos {
     public static Usuario obtenerUsuario(String nombre) {
         String sql = "Select * from usuarios where nombre=?";
         String sql2="SELECT * FROM usuariotablas WHERE nombre_usuario = ?";
-        ArrayList<String> listaCUPS=new ArrayList<>();
+        HashMap<String,String> listaCUPS=new HashMap<>();
         try (PreparedStatement preparedStatement = conexion.prepareStatement(sql);
              PreparedStatement preparedStatement2 = conexion.prepareStatement(sql2)) {
             preparedStatement.setString(1, nombre);
@@ -214,7 +215,8 @@ public class BaseDatos {
                 ResultSet resultSet2 = preparedStatement2.executeQuery();
                 if (resultSet2.next()) {
                     String CUPS=resultSet2.getString("CUPS");
-                    listaCUPS.add(CUPS);
+                    String clave=resultSet2.getString("clave");
+                    listaCUPS.put(clave,CUPS);
                 }else{
                     System.out.println("No se encontraron CUPS para ese Usuario.");
                 }

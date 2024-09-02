@@ -1,19 +1,20 @@
 package com.example.simuladorfacturas.objetos;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class Usuario {
     private String nombre;
     private String contrasenha;
-    private ArrayList<String> CUPS;
+    private HashMap<String,String> CUPS;
 
     public Usuario(String nombre, String contrasenha) {
         this.nombre = nombre;
         this.contrasenha = contrasenha;
-        this.CUPS = new ArrayList<>();
+        this.CUPS = new HashMap<>();
     }
 
-    public Usuario(String nombre, ArrayList<String> CUPS) {
+    public Usuario(String nombre, HashMap<String,String> CUPS) {
         this.nombre = nombre;
         this.CUPS = CUPS;
     }
@@ -37,11 +38,11 @@ public class Usuario {
         this.contrasenha = contrasenha;
     }
 
-    public ArrayList<String> getCUPS() {
+    public HashMap<String,String> getCUPS() {
         return CUPS;
     }
 
-    public void setCUPS(ArrayList<String> CUPS) {
+    public void setCUPS(HashMap<String,String> CUPS) {
         this.CUPS = CUPS;
     }
 }
