@@ -93,6 +93,34 @@ public class Parseos {
         }
         System.out.println("Archivo leido correctamente");
     }
+
+    public static ArrayList<Precio> leerPreciosMayorista(String archivo) {
+        ArrayList<Precio> listadoPreciosMayorista=new ArrayList<>();
+        try (BufferedReader br= new BufferedReader(new FileReader(archivo))){
+            boolean verano= false;
+            String linea;
+            int contadorlineas=0;
+            while ((linea = br.readLine()) != null) {
+                String[] valores=linea.split(";");
+                if (contadorlineas !=0){
+                    if(Integer.parseInt(valores[0])==805){//asi solo procesa el sistema peninsular 8741 es su codigo
+                        double precio = Double.parseDouble(valores[4]);
+                        String fecha = valores[5];
+                        LocalDateTime fechL = pasarLectura(fecha);
+                        if (Integer.parseInt(fecha.substring(21,22)) == 1) {verano = false; } else verano = true;
+                        listadoPreciosMayorista.add(new Precio(fechL, precio, verano));
+                    }
+                }
+                contadorlineas++;
+            }
+
+        } catch (IOException e) {
+            System.out.println("Error al leer el archivo");
+            e.printStackTrace();
+        }
+        System.out.println("Archivo leido correctamente");
+        return listadoPreciosMayorista;
+    }
     private static void agregarlectura(Lectura lectura) {
          HashMap<LocalDateTime , Lectura> listadoLecturas= PVPC.getListadoLecturas();
         if (listadoLecturas.containsKey(lectura.getFecha())) {

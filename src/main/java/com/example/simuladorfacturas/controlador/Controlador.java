@@ -30,8 +30,15 @@ public class Controlador {
                 BaseDatos.insertarDatos( cups, lectura.getValue());
             }
     }
-    public static ArrayList<Coste> calcularCostes(String tabla, LocalDateTime fecha_inicio, LocalDateTime fecha_final){
-        return BaseDatos.calcularCostes(tabla,fecha_inicio,fecha_final);
+    public static ArrayList<CosteImpuestos> calcularCostes(String tabla, LocalDateTime fecha_inicio, LocalDateTime fecha_final){
+        ArrayList<Coste>listacostes=BaseDatos.calcularCostes(tabla,fecha_inicio,fecha_final);
+        ArrayList<CosteImpuestos> listaConImpuestos=new ArrayList<>();
+        for (Coste coste:listacostes) {
+            double iva=CosteImpuestos.calculoIva(coste.getFecha());
+            double impEl=CosteImpuestos.calculoImp(coste.getFecha());
+            listaConImpuestos.add(new CosteImpuestos(coste,iva,impEl));
+        }
+        return listaConImpuestos;
     }
 
     public  static Potencia anoPotencia(int ano){  return BaseDatos.anoPotencia(ano);  }
@@ -60,5 +67,18 @@ public class Controlador {
         String password_hash=BCrypt.hashpw(usuarioLogueado.getContrasenha(),BCrypt.gensalt());
         usuarioLogueado.setContrasenha(password_hash);
         return BaseDatos.cambiarContrasenha(usuarioLogueado);
+    }
+
+    public static void Insertarmayorista(ArrayList<Precio> precios) {
+        openConexion();
+        BaseDatos.insertPreciosMayorista(precios);
+        closeConexion();
+    }
+
+    public static ArrayList<Double> mediaMayorista(){
+        openConexion();
+        ArrayList<Double> medias=BaseDatos.mediaMayorista();
+        closeConexion();
+        return medias;
     }
 }

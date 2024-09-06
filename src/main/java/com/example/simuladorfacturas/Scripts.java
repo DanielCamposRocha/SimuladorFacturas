@@ -21,10 +21,15 @@ public class Scripts {
 //        lanzarScript(Controlador.ultimaActualizacionREE());
 //        Controlador.insertPrecios(PVPC.getListadoPrecios());
 //        PVPC.calcularFactura();
+ //       Scripts.lanzarMayorista(Controlador.Inertarmayorista());
 
+//        Controlador.Insertarmayorista(Parseos.leerPreciosMayorista("D:\\Proyectos Intellij\\SimuladorFacturas\\src\\main\\resources\\export_PrecioMedioHorarioFinalSumaDeComponentes_2024-09-04_10_20.csv"));
+        System.out.println(Controlador.mediaMayorista());
         }
 
+public static void lanzarMayorista(){
 
+}
 
 
     public static void lanzarScript(LocalDateTime fechaInicial) {

@@ -2,20 +2,18 @@ package com.example.simuladorfacturas.contratos;
 
 import com.example.simuladorfacturas.controlador.Controlador;
 import com.example.simuladorfacturas.estadisticas.Medias;
-import com.example.simuladorfacturas.objetos.Coste;
-import com.example.simuladorfacturas.objetos.Lectura;
-import com.example.simuladorfacturas.objetos.Potencia;
-import com.example.simuladorfacturas.objetos.Precio;
+import com.example.simuladorfacturas.objetos.*;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.Duration;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 
 public class PVPC {
-    private static ArrayList<Coste> listacostes=new ArrayList<Coste>();
+    private static ArrayList<CosteImpuestos> listacostes=new ArrayList<CosteImpuestos>();
     ArrayList<Potencia>listadoPotencias=new ArrayList<>();
     private static ArrayList<Precio> listadoPrecios = new ArrayList<>();
     private static HashMap<LocalDateTime , Lectura> listadoLecturas= new HashMap<>();
@@ -59,7 +57,7 @@ public class PVPC {
 
         listacostes= Controlador.calcularCostes(identificador, localDateTimeI,localDateTimeF);
 
-        for (Coste coste:listacostes ) {
+        for (CosteImpuestos coste:listacostes ) {
             total=total.add(new BigDecimal(coste.getCoste()));
             if(coste.getConsumo()>=0)consumos+=coste.getConsumo();
             if(coste.getConsumo()<0)autoconsumos+=coste.getConsumo();
@@ -121,8 +119,8 @@ public class PVPC {
             margenF=new BigDecimal(pot1*3.113*diasF/366).setScale(2, RoundingMode.HALF_DOWN);
             pp=costep1.add(costep2).add(margen).add(costep1F).add(costep2F).add(margenF).add(new BigDecimal(anhosPerdidos)).setScale(2, RoundingMode.HALF_DOWN);
             alquiler=new BigDecimal(dias*0.026557).setScale(2, RoundingMode.HALF_DOWN);
-            impuestoEl=total.add(bono).add(pp).multiply(new BigDecimal("0.0511269632")).setScale(2, RoundingMode.HALF_DOWN);
-            iva=total.add(pp).add(bono).add(impuestoEl).add(alquiler).multiply(new BigDecimal(0.1)).setScale(2, RoundingMode.HALF_DOWN);
+            impuestoEl=total.add(bono).add(pp).multiply(new BigDecimal("0.0511269632")).setScale(2, RoundingMode.HALF_DOWN);// TODO: 09/09/2024  
+            iva=total.add(pp).add(bono).add(impuestoEl).add(alquiler).multiply(new BigDecimal(0.1)).setScale(2, RoundingMode.HALF_DOWN);// TODO: 09/09/2024  
             clavada=total.add(pp).add(bono).add(impuestoEl).add(alquiler).add(iva).setScale(2, RoundingMode.HALF_DOWN);
         }
         BigDecimal totalredondeado=total.setScale(2, RoundingMode.HALF_DOWN);
@@ -139,7 +137,7 @@ public class PVPC {
         Medias.promedioSemanales(consumos,dias);
     }
 
-    public static ArrayList<Coste> getListacostes() {
+    public static ArrayList<CosteImpuestos> getListacostes() {
         return listacostes;
     }
 
@@ -169,5 +167,7 @@ public class PVPC {
     public static ArrayList<Precio> getListadoPrecios() {
         return listadoPrecios;
     }
+
+    
 
 }

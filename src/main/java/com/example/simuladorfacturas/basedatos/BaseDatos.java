@@ -260,4 +260,51 @@ public class BaseDatos {
             return false;
         }
     }
+
+    public static void insertPreciosMayorista(ArrayList<Precio> precios) {
+        String insertSQL = "INSERT INTO preciomayorista (fecha, precio, verano) VALUES (?, ?, ?)";
+
+        try (PreparedStatement pstmt = conexion.prepareStatement(insertSQL)) {
+
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+
+            for (Precio precio : precios) {
+                String formattedDate = precio.getFecha().format(formatter);
+
+                pstmt.setString(1, formattedDate);
+                pstmt.setDouble(2, precio.getPrecio());
+                pstmt.setBoolean(3, precio.isVerano());
+
+                pstmt.addBatch();  // Agrega la instrucción al lote
+            }
+
+            int[] rowsAffected = pstmt.executeBatch();  // Ejecuta el lote de instrucciones
+            System.out.println("Filas insertadas: " + rowsAffected.length);
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static ArrayList<Double> mediaMayorista() {
+        ArrayList<Double> mediasMensuales=new ArrayList<>();
+        String sql = "SELECT MONTH(fecha) AS month, AVG(precio) AS avg_price " +
+                "FROM precioMayorista GROUP BY MONTH(fecha) ";
+
+        try (PreparedStatement stmt = conexion.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
+
+            // Procesa los resultados
+            while (rs.next()) {
+                double mediaMensual = rs.getDouble("avg_price");
+                mediasMensuales.add(mediaMensual);
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return mediasMensuales;
+
+    }
 }
