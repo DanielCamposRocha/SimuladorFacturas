@@ -2,7 +2,6 @@ package com.example.simuladorfacturas.objetos;
 
 import com.example.simuladorfacturas.controlador.Controlador;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 
@@ -66,6 +65,15 @@ public class CosteImpuestos extends Coste{
         }
         if(precioMedio>45)return 0.1;
         else return 0.21;
-
     }
+
+    public static double ivaAplicable(ArrayList<CosteImpuestos> listaCostes){
+        double IVA=0.21;
+        for (CosteImpuestos hora:listaCostes) {
+            if(hora.getIva()<IVA) IVA=hora.getIva();
+        }
+        return IVA;
+    }
+
+
 }

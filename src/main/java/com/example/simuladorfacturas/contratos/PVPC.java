@@ -7,7 +7,6 @@ import com.example.simuladorfacturas.objetos.*;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.Duration;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -56,7 +55,7 @@ public class PVPC {
 //        LocalDateTime localDateTimeF=LocalDateTime.of(Integer.parseInt(ffinal[0]),Integer.parseInt(ffinal[1]),Integer.parseInt(ffinal[2]),0,0);
 
         listacostes= Controlador.calcularCostes(identificador, localDateTimeI,localDateTimeF);
-
+        double IVA=CosteImpuestos.ivaAplicable(listacostes);
         for (CosteImpuestos coste:listacostes ) {
             total=total.add(new BigDecimal(coste.getCoste()));
             if(coste.getConsumo()>=0)consumos+=coste.getConsumo();
@@ -80,7 +79,7 @@ public class PVPC {
             alquiler=new BigDecimal(dias*0.026557).setScale(2, RoundingMode.HALF_DOWN);//alquiler contador
             impuestoEl=total.add(bono).add(pp).multiply(new BigDecimal("0.0511269632")).
                     setScale(2, RoundingMode.HALF_DOWN);//impuesto electrico
-            iva=total.add(pp).add(bono).add(impuestoEl).add(alquiler).multiply(new BigDecimal(0.1)).
+            iva=total.add(pp).add(bono).add(impuestoEl).add(alquiler).multiply(new BigDecimal(IVA)).
                     setScale(2, RoundingMode.HALF_DOWN);//iva, ojo con los cambios de valor
             clavada=total.add(pp).add(bono).add(impuestoEl).add(alquiler).add(iva).
                     setScale(2, RoundingMode.HALF_DOWN);//total de la factura
@@ -124,15 +123,18 @@ public class PVPC {
             clavada=total.add(pp).add(bono).add(impuestoEl).add(alquiler).add(iva).setScale(2, RoundingMode.HALF_DOWN);
         }
         BigDecimal totalredondeado=total.setScale(2, RoundingMode.HALF_DOWN);
+        BigDecimal asd=new BigDecimal(0);
+        if(consumos!=0.0)asd=totalredondeado.divide(new BigDecimal(consumos),4,RoundingMode.HALF_DOWN);
 
-        System.out.println("Consumo de energia "+consumos+" KWH"+" Coste de la energia "+totalredondeado+" € precio promedio "+(totalredondeado.divide(new BigDecimal(consumos),4,RoundingMode.HALF_DOWN)));
+        System.out.println("Consumo de energia "+consumos+" KWH"+" Coste de la energia "+totalredondeado+" € precio promedio "+(asd));
         System.out.println( "coste de la potencia "+pp+" €");
         System.out.println("impuesto electrico "+impuestoEl);
         System.out.println("Vertido autoconsumo "+autoconsumos+" KWH");
         System.out.println("Bono Social "+bono);
         System.out.println("Alquiler del contador "+alquiler);
-        System.out.println("Iva "+iva);
+        System.out.println("El Iva aplicado es "+IVA+" lo que da un valor de "+iva);
         System.out.println("Final "+clavada+" €");
+        System.out.println(IVA);
         Medias.promedioHoras(consumos,dias);
         Medias.promedioSemanales(consumos,dias);
     }

@@ -41,7 +41,12 @@ public class Controlador {
         return listaConImpuestos;
     }
 
-    public  static Potencia anoPotencia(int ano){  return BaseDatos.anoPotencia(ano);  }
+    public  static Potencia anoPotencia(int ano){
+        openConexion();
+        Potencia resultado= BaseDatos.anoPotencia(ano);
+        closeConexion();
+        return resultado;
+    }
 
     public static int crearUsuario(Usuario usuario){
         String password_hash=BCrypt.hashpw(usuario.getContrasenha(),BCrypt.gensalt());

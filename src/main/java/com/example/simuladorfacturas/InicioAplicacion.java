@@ -9,13 +9,12 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 
-public class HelloApplication extends Application {
+public class InicioAplicacion extends Application {
     @Override
     public void start(Stage stage) throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("hello-view.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(InicioAplicacion.class.getResource("hello-view.fxml"));
         Controlador.openConexion();
         Scripts.lanzarScript(Controlador.ultimaActualizacionREE());
-
         if(PVPC.getListadoPrecios().size()>1)Controlador.insertPrecios(PVPC.getListadoPrecios());
         Scene scene = new Scene(fxmlLoader.load(), 450, 340);
         stage.setTitle("Simulador de Factura");
