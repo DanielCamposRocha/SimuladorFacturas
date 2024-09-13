@@ -7,7 +7,6 @@ import com.example.simuladorfacturas.objetos.*;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.Duration;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -124,8 +123,10 @@ public class PVPC {
             clavada=total.add(pp).add(bono).add(impuestoEl).add(alquiler).add(iva).setScale(2, RoundingMode.HALF_DOWN);
         }
         BigDecimal totalredondeado=total.setScale(2, RoundingMode.HALF_DOWN);
+        BigDecimal asd=new BigDecimal(0);
+        if(consumos!=0.0)asd=totalredondeado.divide(new BigDecimal(consumos),4,RoundingMode.HALF_DOWN);
 
-        System.out.println("Consumo de energia "+consumos+" KWH"+" Coste de la energia "+totalredondeado+" € precio promedio "+(totalredondeado.divide(new BigDecimal(consumos),4,RoundingMode.HALF_DOWN)));
+        System.out.println("Consumo de energia "+consumos+" KWH"+" Coste de la energia "+totalredondeado+" € precio promedio "+(asd));
         System.out.println( "coste de la potencia "+pp+" €");
         System.out.println("impuesto electrico "+impuestoEl);
         System.out.println("Vertido autoconsumo "+autoconsumos+" KWH");

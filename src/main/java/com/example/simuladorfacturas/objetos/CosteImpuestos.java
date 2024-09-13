@@ -2,7 +2,6 @@ package com.example.simuladorfacturas.objetos;
 
 import com.example.simuladorfacturas.controlador.Controlador;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 
