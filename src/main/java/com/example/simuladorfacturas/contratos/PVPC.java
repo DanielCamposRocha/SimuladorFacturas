@@ -15,6 +15,7 @@ public class PVPC {
     private static ArrayList<CosteImpuestos> listacostes=new ArrayList<CosteImpuestos>();
     ArrayList<Potencia>listadoPotencias=new ArrayList<>();
     private static ArrayList<Precio> listadoPrecios = new ArrayList<>();
+    private static ArrayList<Precio> listadoMayorista=new ArrayList<>();
     private static HashMap<LocalDateTime , Lectura> listadoLecturas= new HashMap<>();
     private static String identificador="es0022000004433403rw1p";
     private static BigDecimal total;
@@ -169,7 +170,11 @@ public class PVPC {
     public static ArrayList<Precio> getListadoPrecios() {
         return listadoPrecios;
     }
+    public static void setListadoMayorista(ArrayList<Precio> listadoMayorista) {
+        PVPC.listadoMayorista = listadoMayorista;
+    }
 
-    
-
+    public static ArrayList<Precio> getListadoMayorista() {
+        return listadoMayorista;
+    }
 }

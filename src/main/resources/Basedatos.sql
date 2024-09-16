@@ -24,6 +24,12 @@ CREATE TABLE UsuarioTablas (
     FOREIGN KEY (nombre_usuario) REFERENCES Usuarios(nombre),
     UNIQUE(nombre_usuario, clave)
 );
+Create table precioMayorista(
+fecha datetime,
+precio double,
+verano boolean,
+primary key (fecha, verano)
+);
 INSERT INTO Potencia (ano, periodo1, periodo2) VALUES
 (2021, 23.469833, 0.96113),
 (2022, 22.988256, 0.93889),

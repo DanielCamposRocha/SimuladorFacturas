@@ -22,7 +22,7 @@ public class AplicacionUsuarios {
 
 	public void iniciarSesion(String nombreUsuario, String contrasenhaUsuario) {
 		Usuario usuario=new Usuario(nombreUsuario,contrasenhaUsuario);
-		Controlador.openConexion();
+
 		if (Controlador.comprobarContrasenha(usuario)) {
 			ventanaInicioSesion.setTextoUsuario("");
 			ventanaInicioSesion.setTextoContraseña("");
@@ -33,7 +33,7 @@ public class AplicacionUsuarios {
 		} else {
 			JOptionPane.showMessageDialog(null, "Usuario o contraseña incorrecta");
 		}
-		Controlador.closeConexion();
+
 	}
 
 	public void cerrarSesion() {
@@ -44,29 +44,27 @@ public class AplicacionUsuarios {
 	}
 
 	public void crearUsuario(String nombre, String contraseña) {
-		Controlador.openConexion();
+
 		if(Controlador.obtenerUsuario(nombre)==null){
 			Usuario nuevo= new Usuario(nombre,contraseña);
 			Controlador.crearUsuario(nuevo);
 		}else {
 			JOptionPane.showMessageDialog(null, "Ya existe un usuario con ese nombre");
 		}
-		Controlador.closeConexion();
+
 	}
 
 	public void cambiarContraseña(String nuevaContrasenha) {
-		Controlador.openConexion();
+
 		usuarioLogueado.setContrasenha(nuevaContrasenha);
 		if(Controlador.cambiarContrasenha(usuarioLogueado))	cerrarSesion();
 		else{System.out.println("No se ha podido modificar la contraseña");	}
-		Controlador.closeConexion();
+
 	}
 
 	public void borrarUsuario(String nombreUsuario) {
-		Controlador.openConexion();
 		// TODO: 02/09/2024 borrado de usuarios teniendo en cuenta la tabla con los cups
 		cerrarSesion();
-		Controlador.closeConexion();
 	}
 
 	public void mostrarVentanaCrearUsuario() {

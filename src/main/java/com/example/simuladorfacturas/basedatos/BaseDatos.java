@@ -307,4 +307,26 @@ public class BaseDatos {
         return mediasMensuales;
 
     }
+
+    public static LocalDateTime ultimaMayorista() {
+        String query = "SELECT fecha FROM preciomayorista ORDER BY fecha DESC LIMIT 1";
+
+        try (PreparedStatement preparedStatement = conexion.prepareStatement(query)) {
+
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            if (resultSet.next()) {
+                System.out.println("Fecha más reciente: " + resultSet.getTimestamp("fecha"));
+                Timestamp timestamp = resultSet.getTimestamp("fecha");
+                return timestamp.toLocalDateTime();  // Convertir a LocalDateTime
+            } else {
+                System.out.println("No se encontraron registros.");
+                return null;
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
 }

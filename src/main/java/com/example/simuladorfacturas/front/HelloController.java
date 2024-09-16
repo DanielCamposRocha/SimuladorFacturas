@@ -39,13 +39,13 @@ public class HelloController {
     protected void onHelloButtonClick() {
         //if(selectedFile!=null) Parseos.leerCsvConsumos(selectedFile.getAbsolutePath());
         if (Validaciones.validarFechas(fechaInicialSeleccionada,fechafinalSeleccionada)){
-            Controlador.openConexion();
+
             LocalDateTime fechaI=LocalDateTime.of(fechaInicialSeleccionada,LocalTime.of(0,0,0));
             LocalDateTime fechaf=LocalDateTime.of(fechafinalSeleccionada, LocalTime.of(23,0,0));
             double P1= Validaciones.validarDouble(p1.getText());
             double P2=Validaciones.validarDouble(p2.getText());
             if(P1!=-1 & P2!=-1) PVPC.calcularFactura(fechaI,fechaf,P1,P2);
-            Controlador.closeConexion();
+
         }
     }
 

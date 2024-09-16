@@ -18,8 +18,14 @@ public class Parseos {
         String[] tercer=segund[0].split("}");
         ArrayList<String> listado=new ArrayList<>();
         listado.add(tercer[0].substring(7));
+        String[] may1=primer[2].split("]");
+        String[] may2=may1[0].split("}");
+        ArrayList<String> listadoM=new ArrayList<>();
+        listadoM.add(may2[0].substring(7));
         for(int i=1;i< tercer.length;i++) listado.add(tercer[i].substring(4));
+        for(int i=1;i< may2.length;i++) listadoM.add(may2[i].substring(4));
         ArrayList<Precio>listadoP= PVPC.getListadoPrecios();
+        ArrayList<Precio>listadoMayorista=PVPC.getListadoMayorista();
 
         for (String objeto:listado) {
             boolean verano;
@@ -37,7 +43,25 @@ public class Parseos {
             System.out.println(ahora+" tiene un precio de "+ precioHora+" "+fecha+" "+hora+" "+verano);
             listadoP.add(new Precio(ahora,precioHora,verano));
         }
+        for (String objeto:listadoM) {
+            boolean verano;
+            double precioHora;
+            String[] param=objeto.split(",");
+            String[] precios=param[0].split(":");
+            precioHora= Double.parseDouble((precios[1].substring(1)));
+            String[] fechaHora=param[2].split(":");
+            String[] fechai=fechaHora[1].substring(2).split("T");
+            String fecha=fechai[0];
+            String[] pasar=fecha.split("-");
+            String hora=fechai[1];
+            LocalDateTime ahora=LocalDateTime.of(Integer.parseInt(pasar[0]),Integer.parseInt(pasar[1]),Integer.parseInt(pasar[2]),Integer.parseInt(hora),0);
+            if(Integer.parseInt(fechaHora[3].substring(8))==1){ verano=false; }else verano=true;
+            System.out.println(ahora+" tiene un precio de "+ precioHora+" "+fecha+" "+hora+" "+verano);
+            listadoMayorista.add(new Precio(ahora,precioHora,verano));
+        }
         PVPC.setListadoPrecios(listadoP);
+        PVPC.setListadoMayorista(listadoMayorista);
+
     }
 
     public static void leerExcellPrecios(String archivo){
@@ -137,4 +161,5 @@ public class Parseos {
         LocalDateTime ahora=LocalDateTime.of(Integer.parseInt(pasar[0]),Integer.parseInt(pasar[1]),Integer.parseInt(dia[0]),Integer.parseInt(horas[0]),0);
         return ahora;
     }
+
 }
