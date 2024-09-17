@@ -31,7 +31,7 @@ public class Controlador {
     public static void insertPrecios(ArrayList<Precio> listado) {
         Controlador.openConexion();
         BaseDatos.insertPrecios(listado);
-        BaseDatos.insertPreciosMayorista(PVPC.getListadoPrecios());
+        BaseDatos.insertPreciosMayorista(PVPC.getListadoMayorista());
         Controlador.closeConexion();
     }
 
