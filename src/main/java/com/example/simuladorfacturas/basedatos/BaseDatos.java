@@ -3,6 +3,7 @@ package com.example.simuladorfacturas.basedatos;
 import com.example.simuladorfacturas.objetos.*;
 
 import java.sql.*;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -175,7 +176,10 @@ public class BaseDatos {
                 int ano2 = resultSet.getInt("ano");
                 double p1 = resultSet.getDouble("periodo1");
                 double p2 = resultSet.getDouble("periodo2");
-                return new Potencia(ano2, p1, p2);
+                double margenp1=resultSet.getDouble("margenp1");
+                double margenp2=resultSet.getDouble("margenp2");
+                double costefijo=resultSet.getDouble("costefijo");
+                return new Potencia(ano2, p1, p2,margenp1,margenp2,costefijo);
 
             } else {
                 System.out.println("No se encontraron registros.");
@@ -233,7 +237,7 @@ public class BaseDatos {
     public static String recuperarHash(String nombre) {
         String hash;
         String sql = "Select * from usuarios where nombre=?";
-        try (PreparedStatement preparedStatement = conexion.prepareStatement(sql);){
+        try (PreparedStatement preparedStatement = conexion.prepareStatement(sql)){
             preparedStatement.setString(1, nombre);
             ResultSet resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {
@@ -251,7 +255,7 @@ public class BaseDatos {
 
     public static boolean cambiarContrasenha(Usuario usuarioLogueado) {
         String sql="UPDATE Usuarios SET password_hash = ? WHERE nombre = ?";
-        try (PreparedStatement preparedStatement = conexion.prepareStatement(sql);){
+        try (PreparedStatement preparedStatement = conexion.prepareStatement(sql)){
             preparedStatement.setString(1, usuarioLogueado.getContrasenha());
             preparedStatement.setString(2, usuarioLogueado.getNombre());
             preparedStatement.executeUpdate();
@@ -328,5 +332,11 @@ public class BaseDatos {
             e.printStackTrace();
             return null;
         }
+    }
+
+    public static ArrayList<LocalDate> listafestivos(int anho) {
+        ArrayList<LocalDate> listafestivos=new ArrayList<>();//todo sql y montar todo aqui
+        String sql = "Select * from festivos where año=?";
+        return listafestivos;
     }
 }

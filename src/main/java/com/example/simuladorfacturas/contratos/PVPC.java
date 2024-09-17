@@ -6,6 +6,7 @@ import com.example.simuladorfacturas.objetos.*;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.DayOfWeek;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -29,6 +30,12 @@ public class PVPC {
         double consumos = 0;
         double autoconsumos=0;
         int dias=0;
+        int punta=0;
+        int valle=0;
+        int llano=0;
+        double pc=0;
+        double vc=0;
+        double llc=0;
 
         Potencia preciosPotencia = null;
         Potencia preciosPotencia2=null;
@@ -42,8 +49,7 @@ public class PVPC {
         BigDecimal alquiler=new BigDecimal(0);
 
         total=new BigDecimal(0.00);
-        double peaje=2.989915;
-        double peaje2=0.192288;
+
         double bonosocial=2.299047*5.394483/366;
 
 //        String fecha_inicial= Utilidades.pedirString("Introduce fecha inicial del calculo (yyyy-mm-dd)");
@@ -59,23 +65,40 @@ public class PVPC {
         double IVA=CosteImpuestos.ivaAplicable(listacostes);
         for (CosteImpuestos coste:listacostes ) {
             total=total.add(new BigDecimal(coste.getCoste()));
+            switch (tramo(coste.getFecha())){
+                case "punta" ->{
+                    punta++;
+                    pc+=coste.getConsumo();
+                }
+                case "valle" ->{
+                    valle++;
+                    vc+=coste.getConsumo();
+                }
+                case "llano" ->{
+                    llano++;
+                    llc+=coste.getConsumo();
+                }
+            }
             if(coste.getConsumo()>=0)consumos+=coste.getConsumo();
             if(coste.getConsumo()<0)autoconsumos+=coste.getConsumo();
         }
             //Caso de ser en el mismo año
         if(localDateTimeI.getYear()==localDateTimeF.getYear()){
             preciosPotencia= Controlador.anoPotencia(localDateTimeI.getYear());
+            double peaje= preciosPotencia.getMargenp1();
+            double peaje2= preciosPotencia.getMargenp2();
+            double margenC=preciosPotencia.getCostefijo();
             double precioPo1=preciosPotencia.getP1()+peaje;//coste de la potencia en P1
             double precioPo2=preciosPotencia.getP2()+peaje2;//coste de la potencia en P2
             Duration duracion=Duration.between(localDateTimeI,localDateTimeF);
-            dias=(int)duracion.toDays();
+            dias=1+(int)duracion.toDays();
             double proporcionDias=dias/366.0;
             bono=new BigDecimal(dias*bonosocial).setScale(2, RoundingMode.HALF_DOWN);//coste bono social
             costep1=new BigDecimal(pot1).multiply(new BigDecimal(precioPo1)).multiply(new BigDecimal(proporcionDias)).
                     setScale(2, RoundingMode.HALF_DOWN);//total coste P1
             costep2=new BigDecimal(pot2).multiply(new BigDecimal(precioPo2)).multiply(new BigDecimal(proporcionDias)).
                     setScale(2, RoundingMode.HALF_DOWN);//total coste P2
-            margen=new BigDecimal(pot1*3.113*dias/366).setScale(2, RoundingMode.HALF_DOWN);//margen potencia distribuidora
+            margen=new BigDecimal(pot1*margenC*dias/366).setScale(2, RoundingMode.HALF_DOWN);//margen potencia distribuidora
             pp=costep1.add(costep2).add(margen).setScale(2, RoundingMode.HALF_DOWN);//coste total de la potencia contratada
             alquiler=new BigDecimal(dias*0.026557).setScale(2, RoundingMode.HALF_DOWN);//alquiler contador
             impuestoEl=total.add(bono).add(pp).multiply(new BigDecimal("0.0511269632")).
@@ -93,7 +116,7 @@ public class PVPC {
             //listado precios años intermedios
             for(int i=localDateTimeI.getYear()+1;i<localDateTimeI.getYear();i++) listadoPotencias.add(Controlador.anoPotencia(i));
             //costes de potencia en los años intermedios
-            for (Potencia pot:listadoPotencias)  anhosPerdidos+=pot.getP1()+peaje+pot.getP2()+peaje;
+            for (Potencia pot:listadoPotencias)  anhosPerdidos+=pot.getP1()+pot.getMargenp1()+pot.getP2()+pot.getMargenp2()+pot.getCostefijo();
             BigDecimal costep1F=new BigDecimal(0);
             BigDecimal costep2F=new BigDecimal(0);
             preciosPotencia=Controlador.anoPotencia(localDateTimeI.getYear());
@@ -105,18 +128,21 @@ public class PVPC {
             dias= (int) Duration.between(localDateTimeI,localDateTimeF).toDays();
             double proporcionDiasI=diasI/366.0;
             double proporcionDiasF=diasF/366.0;
+            double peaje= preciosPotencia.getMargenp1();
+            double peaje2= preciosPotencia.getMargenp2();
+            double margenC=preciosPotencia.getCostefijo();
             double precioPo1=preciosPotencia.getP1()+peaje;
             double precioPo2=preciosPotencia.getP2()+peaje2;
-            double precioPo1F=preciosPotencia2.getP1()+peaje;
-            double precioPo2F=preciosPotencia2.getP2()+peaje2;
+            double precioPo1F=preciosPotencia2.getP1()+preciosPotencia2.getMargenp1();
+            double precioPo2F=preciosPotencia2.getP2()+preciosPotencia2.getMargenp1();
             BigDecimal margenF=new BigDecimal(0);
             bono=new BigDecimal(dias*bonosocial).setScale(2, RoundingMode.HALF_DOWN);
             costep1=new BigDecimal(pot1).multiply(new BigDecimal(precioPo1)).multiply(new BigDecimal(proporcionDiasI)).setScale(2, RoundingMode.HALF_DOWN);//coste P1 año inicial
             costep2=new BigDecimal(pot2).multiply(new BigDecimal(precioPo2)).multiply(new BigDecimal(proporcionDiasI)).setScale(2, RoundingMode.HALF_DOWN);//coste P2 año inicial
-            margen=new BigDecimal(pot1*3.113*diasI/366).setScale(2, RoundingMode.HALF_DOWN);
+            margen=new BigDecimal(pot1*margenC*diasI/366).setScale(2, RoundingMode.HALF_DOWN);
             costep1F=new BigDecimal(pot1).multiply(new BigDecimal(precioPo1F)).multiply(new BigDecimal(proporcionDiasF)).setScale(2, RoundingMode.HALF_DOWN);//coste P1 año final
             costep2F=new BigDecimal(pot2).multiply(new BigDecimal(precioPo2F)).multiply(new BigDecimal(proporcionDiasF)).setScale(2, RoundingMode.HALF_DOWN);//coste P2 año final
-            margenF=new BigDecimal(pot1*3.113*diasF/366).setScale(2, RoundingMode.HALF_DOWN);
+            margenF=new BigDecimal(pot1*preciosPotencia2.getCostefijo()*diasF/366).setScale(2, RoundingMode.HALF_DOWN);
             pp=costep1.add(costep2).add(margen).add(costep1F).add(costep2F).add(margenF).add(new BigDecimal(anhosPerdidos)).setScale(2, RoundingMode.HALF_DOWN);
             alquiler=new BigDecimal(dias*0.026557).setScale(2, RoundingMode.HALF_DOWN);
             impuestoEl=total.add(bono).add(pp).multiply(new BigDecimal("0.0511269632")).setScale(2, RoundingMode.HALF_DOWN);// TODO: 09/09/2024  
@@ -135,9 +161,27 @@ public class PVPC {
         System.out.println("Alquiler del contador "+alquiler);
         System.out.println("El Iva aplicado es "+IVA+" lo que da un valor de "+iva);
         System.out.println("Final "+clavada+" €");
-        System.out.println(IVA);
+        System.out.println("El iva aplicado es "+IVA+" los dias son "+dias);
+        System.out.println("las horas valle son "+valle+" consumen "+vc);
+        System.out.println("las horas punta son "+punta+" consumen "+pc);
+        System.out.println("las horas llano son "+llano+" consumen "+llc);
         Medias.promedioHoras(consumos,dias);
         Medias.promedioSemanales(consumos,dias);
+    }
+
+    private static String tramo(LocalDateTime fecha) {
+        if (fecha.getDayOfWeek()== DayOfWeek.SATURDAY | fecha.getDayOfWeek()== DayOfWeek.SUNDAY |
+                fecha.getHour()<8 | isFestivo(fecha)) return "valle";
+        else if (fecha.getHour()>=8 & fecha.getHour()<10 |fecha.getHour()>=14 & fecha.getHour()<18 |
+                fecha.getHour()>=22) return "llano";
+        return "punta";
+
+    }
+
+    private static boolean isFestivo(LocalDateTime fecha) {
+        boolean festivo=false;
+        if(Controlador.festivos(fecha.getYear()).contains(fecha))festivo=true;
+        return festivo;
     }
 
     public static ArrayList<CosteImpuestos> getListacostes() {
