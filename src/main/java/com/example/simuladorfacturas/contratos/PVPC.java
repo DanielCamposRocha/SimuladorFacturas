@@ -1,5 +1,6 @@
 package com.example.simuladorfacturas.contratos;
 
+import com.example.simuladorfacturas.AplicacionUsuarios;
 import com.example.simuladorfacturas.controlador.Controlador;
 import com.example.simuladorfacturas.estadisticas.Medias;
 import com.example.simuladorfacturas.objetos.*;
@@ -26,7 +27,7 @@ public class PVPC {
 
 
     public static void calcularFactura(LocalDateTime localDateTimeI, LocalDateTime localDateTimeF, double pot1, double pot2) {
-
+        Usuario usuarioLogueado= AplicacionUsuarios.getUsuarioLogueado();
         double consumos = 0;
         double autoconsumos=0;
         int dias=0;
@@ -52,17 +53,10 @@ public class PVPC {
 
         double bonosocial=2.299047*5.394483/366;
 
-//        String fecha_inicial= Utilidades.pedirString("Introduce fecha inicial del calculo (yyyy-mm-dd)");
-//        String fecha_final=Utilidades.pedirString("Introduce fecha final del calculo ((yyyy-mm-dd))");
-//        Double pot1=Utilidades.pedirDouble("Introduce potencia en KW del periodo1");
-//        Double pot2=Utilidades.pedirDouble("Introduce potencia en KW del periodo2");
-//        String[] inicial=fecha_inicial.split("-");
-//        String[] ffinal=fecha_final.split("-");
-//        LocalDateTime localDateTimeI=LocalDateTime.of(Integer.parseInt(inicial[0]),Integer.parseInt(inicial[1]),Integer.parseInt(inicial[2]),0,0);
-//        LocalDateTime localDateTimeF=LocalDateTime.of(Integer.parseInt(ffinal[0]),Integer.parseInt(ffinal[1]),Integer.parseInt(ffinal[2]),0,0);
-
-        listacostes= Controlador.calcularCostes(identificador, localDateTimeI,localDateTimeF);
+        if(usuarioLogueado==null){listacostes=Controlador.calcularCostes(localDateTimeI,localDateTimeF);}
+        else listacostes= Controlador.calcularCostes(identificador, localDateTimeI,localDateTimeF);
         double IVA=CosteImpuestos.ivaAplicable(listacostes);
+        double ImpE=CosteImpuestos.impuestoElectricoAplicable(listacostes);
         for (CosteImpuestos coste:listacostes ) {
             total=total.add(new BigDecimal(coste.getCoste()));
             switch (tramo(coste.getFecha())){
@@ -101,7 +95,7 @@ public class PVPC {
             margen=new BigDecimal(pot1*margenC*dias/366).setScale(2, RoundingMode.HALF_DOWN);//margen potencia distribuidora
             pp=costep1.add(costep2).add(margen).setScale(2, RoundingMode.HALF_DOWN);//coste total de la potencia contratada
             alquiler=new BigDecimal(dias*0.026557).setScale(2, RoundingMode.HALF_DOWN);//alquiler contador
-            impuestoEl=total.add(bono).add(pp).multiply(new BigDecimal("0.0511269632")).
+            impuestoEl=total.add(bono).add(pp).multiply(new BigDecimal(ImpE)).
                     setScale(2, RoundingMode.HALF_DOWN);//impuesto electrico
             iva=total.add(pp).add(bono).add(impuestoEl).add(alquiler).multiply(new BigDecimal(IVA)).
                     setScale(2, RoundingMode.HALF_DOWN);//iva, ojo con los cambios de valor

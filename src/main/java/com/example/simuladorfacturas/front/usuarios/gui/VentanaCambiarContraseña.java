@@ -61,6 +61,7 @@ public class VentanaCambiarContraseña extends JFrame implements ActionListener 
 			this.dispose();
 		}
 		if(e.getSource().equals(btnCancelar)){
+			app.mostrarVentanaUsuario();
 			this.dispose();
 		}
 	}

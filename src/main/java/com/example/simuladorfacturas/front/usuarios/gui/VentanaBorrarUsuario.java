@@ -53,6 +53,7 @@ public class VentanaBorrarUsuario extends JFrame implements ActionListener {
 			app.borrarUsuario(nombreUsuario);
 		}
 		if(e.getSource().equals(btnCancelar)){
+			app.mostrarVentanaUsuario();
 			this.dispose();
 		}
 

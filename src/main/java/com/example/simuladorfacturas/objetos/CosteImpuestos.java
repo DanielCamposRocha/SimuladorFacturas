@@ -2,6 +2,7 @@ package com.example.simuladorfacturas.objetos;
 
 import com.example.simuladorfacturas.controlador.Controlador;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 
@@ -10,6 +11,7 @@ public class CosteImpuestos extends Coste{
     private double impEl;
     public CosteImpuestos(double precio, double consumo, double coste, LocalDateTime fecha, boolean verano) {
         super(precio, consumo, coste, fecha, verano);
+        this.impEl=impuestoElectricoCalculo(fecha);
     }
 
     public CosteImpuestos(double precio, double consumo, double coste, LocalDateTime fecha, boolean verano, double iva, double impEl) {
@@ -24,9 +26,6 @@ public class CosteImpuestos extends Coste{
         this.impEl = impEl;
     }
 
-    public static double calculoImp(LocalDateTime fecha) {
-        return 0;
-    }
 
     public double getIva() {
         return iva;
@@ -75,5 +74,24 @@ public class CosteImpuestos extends Coste{
         return IVA;
     }
 
+    public static double impuestoElectricoCalculo(LocalDateTime fecha){
+        double ImpE=0.0511269632;
+            if(fecha.isAfter(LocalDate.of(2022,6,1).atStartOfDay())
+                    && fecha.isBefore(LocalDate.of(2024,01,01).atStartOfDay())){
+                return 0.005;
+            }else if(fecha.isBefore(LocalDate.of(2024,4,1).atStartOfDay())){
+                return 0.025;
+            } else if (fecha.isBefore(LocalDate.of(2024,07,01).atStartOfDay())) {
+                return 0.038;
+            }
+        return ImpE;
+    }
 
+    public static  double impuestoElectricoAplicable(ArrayList<CosteImpuestos> listaCostes){
+        double ImpE=0.0511269632;;
+        for (CosteImpuestos hora:listaCostes) {
+            if(hora.getIva()<ImpE) ImpE=hora.getIva();
+        }
+        return ImpE;
+    }
 }

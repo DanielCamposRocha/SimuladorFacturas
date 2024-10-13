@@ -1,19 +1,35 @@
 package com.example.simuladorfacturas;
 
 import com.example.simuladorfacturas.controlador.Controlador;
+import com.example.simuladorfacturas.front.HelloController;
 import com.example.simuladorfacturas.front.usuarios.gui.*;
 import com.example.simuladorfacturas.objetos.Usuario;
+import javafx.stage.Stage;
 
 import javax.swing.*;
+import java.sql.Connection;
 
 public class AplicacionUsuarios {
-
+	public HelloController helloController;
+	public Stage stage;
 	private VentanaInicioSesion ventanaInicioSesion;
 	private VentanaCrearUsuario ventanaCrearUsuario;
 	private VentanaMenuUsuario ventanaMenuUsuario;
 	private VentanaCambiarContraseña ventanaCambiarContraseña;
 	private VentanaBorrarUsuario ventanaBorrarUsuario;
+	private VentanaVerListado ventanaVerListado;
 	private static Usuario usuarioLogueado;
+
+	public AplicacionUsuarios(Stage stage, HelloController helloController) {
+		this.stage = stage;
+		this.helloController=helloController;
+
+	}
+
+	public static Usuario getUsuarioLogueado() {
+		return usuarioLogueado;
+	}
+
 
 	public void ejecutar() {
 		ventanaInicioSesion=new VentanaInicioSesion(this);
@@ -26,10 +42,11 @@ public class AplicacionUsuarios {
 		if (Controlador.comprobarContrasenha(usuario)) {
 			ventanaInicioSesion.setTextoUsuario("");
 			ventanaInicioSesion.setTextoContraseña("");
-			ventanaMenuUsuario = new VentanaMenuUsuario(this, nombreUsuario);
+			ventanaMenuUsuario = new VentanaMenuUsuario(this, nombreUsuario,stage,helloController);
 			ventanaMenuUsuario.setVisible(true);
 			ventanaInicioSesion.setVisible(false);
 			usuarioLogueado=Controlador.obtenerUsuario(nombreUsuario);
+
 		} else {
 			JOptionPane.showMessageDialog(null, "Usuario o contraseña incorrecta");
 		}
@@ -41,6 +58,7 @@ public class AplicacionUsuarios {
 		if(ventanaBorrarUsuario!=null)ventanaBorrarUsuario.dispose();
 		if(ventanaCambiarContraseña!=null)ventanaCambiarContraseña.dispose();
 		usuarioLogueado=new Usuario();
+
 	}
 
 	public void crearUsuario(String nombre, String contraseña) {
@@ -75,13 +93,27 @@ public class AplicacionUsuarios {
 
 	public void mostrarVentanaCambiarContraseña(String nombreUsuario) {
 		ventanaCambiarContraseña=new VentanaCambiarContraseña(this,nombreUsuario);
+		ventanaMenuUsuario.setVisible(false);
 		ventanaCambiarContraseña.setVisible(true);
 	}
 
 	public void mostrarVentanaBorrarUsuario(String nombreUsuario) {
 		ventanaBorrarUsuario=new VentanaBorrarUsuario(this,nombreUsuario);
+		ventanaMenuUsuario.setVisible(false);
 		ventanaBorrarUsuario.setVisible(true);
 	}
 
 
+	public void mostrarVentanaVerListado(VentanaMenuUsuario ventanaMenuUsuario, String nombreUsuario) {
+		ventanaVerListado= new VentanaVerListado(this,nombreUsuario);
+		ventanaMenuUsuario.setVisible(false);
+		ventanaVerListado.setVisible(true);
+	}
+
+	public void mostrarVentanaUsuario() {
+		ventanaMenuUsuario.setVisible(true);
+	}
+	public void cerrarVentanaUsuario(){ventanaVerListado.setVisible(false);}
+
+	public void cerrarVentanaInicioSesion() {ventanaInicioSesion.setVisible(false);	}
 }

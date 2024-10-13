@@ -14,10 +14,11 @@ public class Scripts {
 
 
     public static void main(String[] args) {
+        Controlador.openConexion();
 //        Parseos.leerExcellPrecios("export_TerminoDeFacturacionDeEnergiaActivaDelPVPC20TD_2024-08-11_16_20.csv");
-//        Parseos.leerCsvConsumos("consumptions (6).csv");
+        Parseos.leerCsvConsumos("src/main/resources/consumptions30-829-10.csv");
 //        System.out.println(PVPC.getListadoLecturas());
-//        Controlador.crearTablaLecturas( PVPC.getListadoLecturas());
+        Controlador.crearTablaLecturas( PVPC.getListadoLecturas());
 //        lanzarScript(Controlador.ultimaActualizacionREE());
 //        Controlador.insertPrecios(PVPC.getListadoPrecios());
 //        PVPC.calcularFactura();
@@ -25,6 +26,7 @@ public class Scripts {
 
 //        Controlador.Insertarmayorista(Parseos.leerPreciosMayorista("D:\\Proyectos Intellij\\SimuladorFacturas\\src\\main\\resources\\export_PrecioMedioHorarioFinalSumaDeComponentes_2024-09-04_10_20.csv"));
  //       System.out.println(Controlador.mediaMayorista());
+        Controlador.closeConexion();
         }
 
 
@@ -38,7 +40,6 @@ public class Scripts {
                 LocalDateTime hoy= LocalDateTime.now().withHour(23).withMinute(59);//completamos el dia de hoy
                 String fin = hoy.toString();
                 String token = "2777dc229f57e51aa9cf5eeb98db7d43cccdfd625322ce31bc5ee54049a25bc8";
-
                 // Crear el comando para ejecutar el script de Python
                 List<String> command = new ArrayList<>();
                 command.add("python"); // o "python3" igual hay que cambiarlo en otro equipo
@@ -46,12 +47,10 @@ public class Scripts {
                 command.add(inic);
                 command.add(fin);
                 command.add(token);
-
                 // Construir el proceso
                 ProcessBuilder pb = new ProcessBuilder(command);
                 pb.redirectErrorStream(true); // Redirigir el error estándar a la salida estándar
                 Process process = pb.start();
-
                 // Leer la salida del script de Python
                 BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
                 StringBuilder output = new StringBuilder();
@@ -59,7 +58,6 @@ public class Scripts {
                 while ((line = reader.readLine()) != null) {
                     output.append(line).append("\n");
                 }
-
                 // Esperar a que el proceso termine
                 int exitCode = process.waitFor();
                 if (exitCode == 0) {
@@ -76,9 +74,6 @@ public class Scripts {
             System.out.println("base de precios ya actualizada");
         }
     }
-
-
-
 
 }
 

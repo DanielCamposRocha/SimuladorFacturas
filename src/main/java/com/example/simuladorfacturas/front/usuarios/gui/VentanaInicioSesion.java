@@ -1,12 +1,16 @@
 package com.example.simuladorfacturas.front.usuarios.gui;
 
 import com.example.simuladorfacturas.AplicacionUsuarios;
+import com.example.simuladorfacturas.controlador.Controlador;
+import javafx.application.Platform;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 public class VentanaInicioSesion extends JFrame implements ActionListener {
 
@@ -15,6 +19,7 @@ public class VentanaInicioSesion extends JFrame implements ActionListener {
 	private JTextField textoContraseña;
 	private JButton btnIniciarSesion;
 	private JButton btnCrearNuevoUsuario;
+	private JButton btnvolver;
 	private AplicacionUsuarios app;
 
 	public VentanaInicioSesion(AplicacionUsuarios app) {
@@ -63,9 +68,15 @@ public class VentanaInicioSesion extends JFrame implements ActionListener {
 		contentPane.add(btnIniciarSesion);
 
 		btnCrearNuevoUsuario = new JButton("Crear nuevo usuario");
-		btnCrearNuevoUsuario.setBounds(10, 303, 149, 23);
+		btnCrearNuevoUsuario.setBounds(70, 275, 149, 23);
 		btnCrearNuevoUsuario.addActionListener(this);
 		contentPane.add(btnCrearNuevoUsuario);
+
+		btnvolver = new JButton("Volver");
+		btnvolver.setBounds(270, 275, 149, 23);
+		btnvolver.addActionListener(this);
+		contentPane.add(btnvolver);
+
 	}
 
 
@@ -85,6 +96,15 @@ public class VentanaInicioSesion extends JFrame implements ActionListener {
 		}
 		if(e.getSource().equals(btnIniciarSesion)){
 			app.iniciarSesion(textoUsuario.getText(),textoContraseña.getText());
+
+		}
+		if(e.getSource().equals(btnvolver)){
+			Platform.runLater(() -> {
+
+				app.stage.setOpacity(1);  // Mostrar el Stage de JavaFX
+				app.cerrarVentanaInicioSesion();
+
+			});
 
 		}
 	}

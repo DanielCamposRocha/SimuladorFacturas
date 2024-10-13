@@ -71,6 +71,25 @@ public class BaseDatos {
             e.printStackTrace();
         }
     }
+    public static ArrayList<Precio> listarPrecios(LocalDateTime localDateTimeI, LocalDateTime localDateTimeF) {
+        ArrayList<Precio> listaprecios = new ArrayList<>();
+        String sql = "SELECT * FROM precios WHERE fecha BETWEEN ? AND ?;";
+        try (PreparedStatement preparedStatement = conexion.prepareStatement(sql)) {
+            preparedStatement.setTimestamp(1, Timestamp.valueOf(localDateTimeI));
+            preparedStatement.setTimestamp(2, Timestamp.valueOf(localDateTimeF));
+            ResultSet rs = preparedStatement.executeQuery();
+
+            while (rs.next()) {
+                double precio = rs.getDouble("precio");
+                LocalDateTime fecha = rs.getTimestamp("fecha").toLocalDateTime();
+                boolean verano = rs.getBoolean("verano");
+                listaprecios.add(new Precio( fecha,precio,verano));
+            }
+            return listaprecios;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     public static LocalDateTime fechaUltima() {
         String query = "SELECT fecha FROM precios ORDER BY fecha DESC LIMIT 1";
@@ -338,5 +357,26 @@ public class BaseDatos {
         ArrayList<LocalDate> listafestivos=new ArrayList<>();//todo sql y montar todo aqui
         String sql = "Select * from festivos where año=?";
         return listafestivos;
+    }
+
+
+    public static HashMap<String, String> listaCups(String nombreUsuario) {
+        HashMap<String,String> listaCUPS=new HashMap<>();
+        String sql="SELECT CUPS,clave FROM usuariotablas WHERE nombre_usuario = ?";
+        try (PreparedStatement pstmt = conexion.prepareStatement(sql)){
+            pstmt.setString(1, nombreUsuario);
+            ResultSet resultSet = pstmt.executeQuery();
+            if (resultSet.next()) {
+                String CUPS=resultSet.getString("CUPS");
+                String clave=resultSet.getString("clave");
+                listaCUPS.put(clave,CUPS);
+            }else{
+                System.out.println("No se encontraron CUPS para ese Usuario.");
+            }
+        }catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+        return listaCUPS;
     }
 }

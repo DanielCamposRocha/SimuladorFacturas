@@ -49,12 +49,17 @@
    </HBox>
    <HBox alignment="TOP_CENTER" prefHeight="100.0" prefWidth="200.0">
       <children>
-         <Label prefHeight="86.0" prefWidth="291.0" text="Descargue un documento csv con las lecturas de su contador, desde la pagina de su distribuidor,  cuando lo tenga seleccionelo pulsando el boton consumos" wrapText="true" />
+         <Label fx:id="usuario" prefHeight="86.0" prefWidth="291.0" text="Descargue un documento csv con las lecturas de su contador, desde la pagina de su distribuidor,  cuando lo tenga seleccionelo pulsando el boton consumos" wrapText="true" />
          <Button fx:id="cargaCSV" mnemonicParsing="false" onAction="#setCargaCSV" text="Consumos">
             <HBox.margin>
                <Insets left="20.0" right="20.0" top="30.0" />
             </HBox.margin>
          </Button>
+         <ComboBox fx:id="comboox" disable="true" onAction="#despliegaCombo" prefHeight="25.0" prefWidth="156.0" promptText="Seleccione Cup" visible="false">
+            <HBox.margin>
+               <Insets left="20.0" right="20.0" top="30.0" />
+            </HBox.margin>
+         </ComboBox>
       </children>
    </HBox>
 
